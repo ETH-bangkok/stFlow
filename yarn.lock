@@ -1758,6 +1758,7 @@ __metadata:
     "@typescript-eslint/eslint-plugin": ^5.39.0
     "@uniswap/sdk-core": ^4.0.1
     "@uniswap/v2-sdk": ^3.0.1
+    "@vkruglikov/react-telegram-web-app": ^2.1.9
     abitype: 1.0.5
     autoprefixer: ^10.4.12
     blo: ^1.0.1
@@ -2644,6 +2645,16 @@ __metadata:
     json-schema-to-ts: 1.6.4
     ts-morph: 12.0.0
   checksum: aa69e98b31e5b0db416e4906a70ff7b9fe168146a1d9e67007a2e4514999f7ce0d02153b6314f0ea6fb3a7a0c2ccf841511d09873695e8623a4d95546461bfc9
+  languageName: node
+  linkType: hard
+
+"@vkruglikov/react-telegram-web-app@npm:^2.1.9":
+  version: 2.3.0
+  resolution: "@vkruglikov/react-telegram-web-app@npm:2.3.0"
+  peerDependencies:
+    react: ^18
+    react-dom: ^18
+  checksum: cf2ccd7f89d4d195f04206ef28a6d21e8252ee3f1870126f0a6483c8d2c7e1f62d7964519be9ed7f174682381109a88584d481c33c8e1361b804a5a2757731e8
   languageName: node
   linkType: hard
 
