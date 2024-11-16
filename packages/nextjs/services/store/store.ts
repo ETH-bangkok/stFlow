@@ -19,7 +19,7 @@ type GlobalState = {
   setSourceLsp: (lsp: LSPprovider) => void;
   setDestinationLsp: (lsp: LSPprovider) => void;
   lspProviders: LSPprovider[];
-  updateAllLspData: () => Promise<void>;
+  updateAllLspData: (userAddress: string) => Promise<void>;
 };
 
 export const useGlobalState = create<GlobalState>(set => ({
@@ -52,10 +52,11 @@ export const useGlobalState = create<GlobalState>(set => ({
       },
     })),
   lspProviders: LSPProviders,
-  updateAllLspData: async () => {
+  updateAllLspData: async (userAddress: string) => {
+    if (!userAddress) return;
     try {
       // Fetch data for all providers in parallel
-      const fetchedDataList = await Promise.all(LSPProviders.map(provider => fetchLspData(provider.id)));
+      const fetchedDataList = await Promise.all(LSPProviders.map(provider => fetchLspData(provider.id, userAddress)));
 
       // Update the store with the fetched data
       set(state => ({
@@ -66,6 +67,7 @@ export const useGlobalState = create<GlobalState>(set => ({
                 ...provider,
                 APR: fetchedData.APR,
                 ethExchangeRate: fetchedData.ethExchangeRate,
+                userBalance: fetchedData.userBalance,
               }
             : provider; // If fetch fails, keep the original provider data
         }),
