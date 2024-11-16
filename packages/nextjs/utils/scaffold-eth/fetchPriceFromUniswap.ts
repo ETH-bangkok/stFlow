@@ -59,6 +59,7 @@ export const fetchPriceFromUniswap = async (targetNetwork: ChainWithAttributes):
     );
     const route = new Route([pair], TOKEN, DAI);
     const price = parseFloat(route.midPrice.toSignificant(6));
+
     return price;
   } catch (error) {
     console.error(

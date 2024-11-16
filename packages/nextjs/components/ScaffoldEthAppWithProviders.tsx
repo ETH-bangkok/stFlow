@@ -2,10 +2,9 @@
 
 import { useEffect, useState } from "react";
 import { EthereumWalletConnectors } from "@dynamic-labs/ethereum";
-import { DynamicContextProvider, mergeNetworks } from "@dynamic-labs/sdk-react-core";
+import { DynamicContextProvider } from "@dynamic-labs/sdk-react-core";
 import { DynamicWagmiConnector } from "@dynamic-labs/wagmi-connector";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { anvil } from "@wagmi/core/chains";
 import { useTheme } from "next-themes";
 import { Toaster } from "react-hot-toast";
 import { WagmiProvider, useAccount } from "wagmi";
@@ -60,35 +59,12 @@ export const ScaffoldEthAppWithProviders = ({ children }: { children: React.Reac
     setMounted(true);
   }, []);
 
-  const evmLocalNetworks = [
-    {
-      blockExplorerUrls: [""],
-      chainId: anvil.id,
-      chainName: "Anvil",
-      iconUrls: ["https://app.dynamic.xyz/assets/networks/eth.svg"],
-      name: anvil.name,
-      nativeCurrency: {
-        decimals: anvil.nativeCurrency.decimals,
-        name: anvil.nativeCurrency.name,
-        symbol: anvil.nativeCurrency.symbol,
-        iconUrl: "https://app.dynamic.xyz/assets/networks/eth.svg",
-      },
-      networkId: anvil.id,
-
-      rpcUrls: ["http://127.0.0.1:8545"],
-      vanityName: "Anvil",
-    },
-  ];
-
   return (
     <DynamicContextProvider
       theme={mounted ? (isDarkMode ? "dark" : "light") : "light"}
       settings={{
         environmentId: process.env.NEXT_PUBLIC_DYNAMIC_ENV_VAR || "",
         walletConnectors: [EthereumWalletConnectors],
-        overrides: {
-          evmNetworks: networks => mergeNetworks(evmLocalNetworks, networks),
-        },
       }}
     >
       <WagmiProvider config={wagmiConfig}>

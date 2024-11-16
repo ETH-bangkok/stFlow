@@ -1,15 +1,7 @@
 import { create } from "zustand";
 import scaffoldConfig from "~~/scaffold.config";
 import { ChainWithAttributes } from "~~/utils/scaffold-eth";
-
-/**
- * Zustand Store
- *
- * You can add global state to the app using this useGlobalState, to get & set
- * values from anywhere in the app.
- *
- * Think about it as a global useState.
- */
+import { LSPProviders, LSPprovider, fetchLspData } from "~~/utils/scaffold-eth/LSP";
 
 type GlobalState = {
   nativeCurrency: {
@@ -20,6 +12,14 @@ type GlobalState = {
   setIsNativeCurrencyFetching: (newIsNativeCurrencyFetching: boolean) => void;
   targetNetwork: ChainWithAttributes;
   setTargetNetwork: (newTargetNetwork: ChainWithAttributes) => void;
+  tradeLspPair: {
+    sourceLsp: LSPprovider;
+    destinationLsp: LSPprovider;
+  };
+  setSourceLsp: (lsp: LSPprovider) => void;
+  setDestinationLsp: (lsp: LSPprovider) => void;
+  lspProviders: LSPprovider[];
+  updateAllLspData: () => Promise<void>;
 };
 
 export const useGlobalState = create<GlobalState>(set => ({
@@ -33,4 +33,45 @@ export const useGlobalState = create<GlobalState>(set => ({
     set(state => ({ nativeCurrency: { ...state.nativeCurrency, isFetching: newValue } })),
   targetNetwork: scaffoldConfig.targetNetworks[0],
   setTargetNetwork: (newTargetNetwork: ChainWithAttributes) => set(() => ({ targetNetwork: newTargetNetwork })),
+  tradeLspPair: {
+    sourceLsp: LSPProviders[0],
+    destinationLsp: LSPProviders[1],
+  },
+  setSourceLsp: (lsp: LSPprovider) =>
+    set(state => ({
+      tradeLspPair: {
+        ...state.tradeLspPair,
+        sourceLsp: lsp,
+      },
+    })),
+  setDestinationLsp: (lsp: LSPprovider) =>
+    set(state => ({
+      tradeLspPair: {
+        ...state.tradeLspPair,
+        destinationLsp: lsp,
+      },
+    })),
+  lspProviders: LSPProviders,
+  updateAllLspData: async () => {
+    try {
+      // Fetch data for all providers in parallel
+      const fetchedDataList = await Promise.all(LSPProviders.map(provider => fetchLspData(provider.id)));
+
+      // Update the store with the fetched data
+      set(state => ({
+        lspProviders: state.lspProviders.map((provider, index) => {
+          const fetchedData = fetchedDataList[index];
+          return fetchedData
+            ? {
+                ...provider,
+                APR: fetchedData.APR,
+                ethExchangeRate: fetchedData.ethExchangeRate,
+              }
+            : provider; // If fetch fails, keep the original provider data
+        }),
+      }));
+    } catch (error) {
+      console.error("Error fetching LSP data:", error);
+    }
+  },
 }));
