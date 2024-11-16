@@ -9,7 +9,6 @@ import { useTheme } from "next-themes";
 import { Toaster } from "react-hot-toast";
 import { WagmiProvider, useAccount } from "wagmi";
 import { signMessage } from "wagmi/actions";
-import { Footer } from "~~/components/Footer";
 import { Header } from "~~/components/Header";
 import { ProgressBar } from "~~/components/scaffold-eth/ProgressBar";
 import { useInitializeNativeCurrencyPrice } from "~~/hooks/scaffold-eth";
@@ -35,7 +34,6 @@ const ScaffoldEthApp = ({ children }: { children: React.ReactNode }) => {
           Sign &quot;Hello World&quot; on Anvil
         </button>
         <main className="relative flex flex-col flex-1">{children}</main>
-        <Footer />
       </div>
       <Toaster />
     </>
