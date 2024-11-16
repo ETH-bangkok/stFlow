@@ -8,16 +8,16 @@ type GlobalState = {
     price: number;
     isFetching: boolean;
   };
+  lspLoading: boolean;
+  fromLsp: LSPprovider;
+  toLsp: LSPprovider;
+  setFromLsp: (lsp: Partial<LSPprovider>) => void;
+  setToLsp: (lsp: Partial<LSPprovider>) => void;
   setNativeCurrencyPrice: (newNativeCurrencyPriceState: number) => void;
   setIsNativeCurrencyFetching: (newIsNativeCurrencyFetching: boolean) => void;
+  setLspLoading: (loading: boolean) => void;
   targetNetwork: ChainWithAttributes;
   setTargetNetwork: (newTargetNetwork: ChainWithAttributes) => void;
-  tradeLspPair: {
-    sourceLsp: LSPprovider;
-    destinationLsp: LSPprovider;
-  };
-  setSourceLsp: (lsp: LSPprovider) => void;
-  setDestinationLsp: (lsp: LSPprovider) => void;
   lspProviders: LSPprovider[];
   updateAllLspData: (userAddress: string) => Promise<void>;
 };
@@ -27,30 +27,23 @@ export const useGlobalState = create<GlobalState>(set => ({
     price: 0,
     isFetching: true,
   },
+  lspLoading: true,
+  fromLsp: LSPProviders[0],
+  toLsp: LSPProviders[1],
+  setFromLsp: (lsp: Partial<LSPprovider>): void => set(state => ({ fromLsp: { ...state.fromLsp, ...lsp } })),
+  setToLsp: (lsp: Partial<LSPprovider>): void => set(state => ({ toLsp: { ...state.toLsp, ...lsp } })),
   setNativeCurrencyPrice: (newValue: number): void =>
     set(state => ({ nativeCurrency: { ...state.nativeCurrency, price: newValue } })),
   setIsNativeCurrencyFetching: (newValue: boolean): void =>
     set(state => ({ nativeCurrency: { ...state.nativeCurrency, isFetching: newValue } })),
+  setLspLoading: (loading: boolean): void => set({ lspLoading: loading }),
   targetNetwork: scaffoldConfig.targetNetworks[0],
   setTargetNetwork: (newTargetNetwork: ChainWithAttributes) => set(() => ({ targetNetwork: newTargetNetwork })),
   tradeLspPair: {
     sourceLsp: LSPProviders[0],
     destinationLsp: LSPProviders[1],
+    loading: true,
   },
-  setSourceLsp: (lsp: LSPprovider) =>
-    set(state => ({
-      tradeLspPair: {
-        ...state.tradeLspPair,
-        sourceLsp: lsp,
-      },
-    })),
-  setDestinationLsp: (lsp: LSPprovider) =>
-    set(state => ({
-      tradeLspPair: {
-        ...state.tradeLspPair,
-        destinationLsp: lsp,
-      },
-    })),
   lspProviders: LSPProviders,
   updateAllLspData: async (userAddress: string) => {
     if (!userAddress) return;
@@ -71,6 +64,8 @@ export const useGlobalState = create<GlobalState>(set => ({
               }
             : provider; // If fetch fails, keep the original provider data
         }),
+        fromLsp: state.lspProviders[0],
+        toLsp: state.lspProviders[1],
       }));
     } catch (error) {
       console.error("Error fetching LSP data:", error);

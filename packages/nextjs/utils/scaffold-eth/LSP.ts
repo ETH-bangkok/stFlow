@@ -12,6 +12,7 @@ export type LSPprovider = {
   APR: string | undefined;
   ethExchangeRate: string | undefined;
   tokenContractAddress: string | undefined;
+  amount?: string;
 };
 
 export const LSPProviders: LSPprovider[] = [
